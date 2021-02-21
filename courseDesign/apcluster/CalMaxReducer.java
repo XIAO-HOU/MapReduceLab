@@ -16,7 +16,7 @@ public class CalMaxReducer extends Reducer<IntWritable, Text, NullWritable, Text
     protected void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         double max = -INF;
         double secMax = -INF;
-        double pos = -1;
+        int pos = -1;
         int tot = 0;
         for (Text value : values) {
             // cur[0] = "a+s"，和的值

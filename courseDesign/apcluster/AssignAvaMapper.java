@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.ArrayList;
 
 public class AssignAvaMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     final int N = 100000;
@@ -64,13 +63,15 @@ public class AssignAvaMapper extends Mapper<LongWritable, Text, NullWritable, Te
             String[] cur = elements[col].split("#");
             double r = Double.parseDouble(cur[0]); // r[row][col]
             double s = Double.parseDouble(cur[1]); // s[row][col]
-            double a = 0.0;
+            double a_old = Double.parseDouble(cur[2]);
+            double a_new = 0.0;
             if(row == col) {
-                a = sum[col] - Math.max(0, r);
+                a_new = sum[col] - Math.max(0, r);
             }else{
-                a = Math.min(0, diagonal[col] + sum[col] - Math.max(0, r) - Math.max(0, diagonal[col]));
+                a_new = Math.min(0, diagonal[col] + sum[col] - Math.max(0, r) - Math.max(0, diagonal[col]));
             }
-            result += a+"#"+s;
+            double a = Main.K * a_old + (1 - Main.K) * a_new;
+            result += a+"#"+s+"#"+r;
             if(col < n-1){
                 result += " ";
             }
