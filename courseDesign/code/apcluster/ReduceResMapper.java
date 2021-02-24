@@ -23,6 +23,7 @@ public class ReduceResMapper extends Mapper<LongWritable, Text, LongWritable, Te
         String[] elements = line[1].split(" ");
 
         int n = elements.length;
+        // 以列号为键，行号和元素值为值输出，便于reduce阶段处理列的规约结果
         for (int col = 0; col < n; col++) {
             String element = elements[col];
             rowLong.set(col);

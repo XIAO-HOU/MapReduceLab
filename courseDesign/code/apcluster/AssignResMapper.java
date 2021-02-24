@@ -14,12 +14,13 @@ import java.net.URI;
 
 public class AssignResMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     final int N = 100000;
-    double[] max1 = new double[N];
-    double[] max2 = new double[N];
-    int[] colIndex = new int[N];
+    double[] max1 = new double[N];  // 每行最大值
+    double[] max2 = new double[N];  // 每行次大值
+    int[] colIndex = new int[N];    // 最大值所处的列
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
+        // 读取distributedCache中的文件
         FileSystem fileSystem = FileSystem.get(context.getConfiguration());
         URI[] cacheFiles = context.getCacheFiles();
 
@@ -32,7 +33,7 @@ public class AssignResMapper extends Mapper<LongWritable, Text, NullWritable, Te
                 while ((line = reader.readLine()) != null) {
                     // line
                     String[] value =  line.split("@");
-                    // 行号
+                    // 获得行号
                     int row = Integer.parseInt(value[0]);
                     // 得到最大值和次大值以及最大值的列索引
                     element = value[1].split("#");
@@ -65,11 +66,13 @@ public class AssignResMapper extends Mapper<LongWritable, Text, NullWritable, Te
             double s = Double.parseDouble(cur[1]);
             double r_old = Double.parseDouble(cur[2]);
             double r_new;
+            // 依据a矩阵更新公式进行更新
             if (col != colIndex[row]) {
                 r_new = s - max1[row];
             } else {
                 r_new = s - max2[row];
             }
+            // 阻尼系数防止数据在某个范围内发生振荡，不收敛
             double r = Main.K * r_old + (1 - Main.K) * r_new;
             result += r+"#"+s+"#"+a;
             if (col < n - 1) {

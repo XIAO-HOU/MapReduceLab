@@ -13,10 +13,10 @@ public class ReduceResReducer extends Reducer<LongWritable, Text, NullWritable, 
 
     @Override
     protected void reduce(LongWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        double sum = 0.0;
-        double diagonal = 0.0;
+        double sum = 0.0;       // 列的和
+        double diagonal = 0.0;  // 对角线值
 
-        // 列号
+        // 获得列号
         long col = Long.parseLong(key.toString());
 
         for (Text value: values) {
@@ -24,9 +24,11 @@ public class ReduceResReducer extends Reducer<LongWritable, Text, NullWritable, 
             String[] elements = value.toString().split("#");
             long row = Long.parseLong(elements[0]);
             double val = Double.parseDouble(elements[1]);
+            // 获取对角线元素
             if (row == col) {
                 diagonal = val;
             }
+            // 依据公式累和
             val = Double.max(0.0, val);
             sum += val;
         }

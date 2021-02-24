@@ -14,11 +14,12 @@ import java.net.URI;
 
 public class AssignAvaMapper extends Mapper<LongWritable, Text, NullWritable, Text> {
     final int N = 100000;
-    double[] sum = new double[N];
-    double[] diagonal = new double[N];
+    double[] sum = new double[N];       // 列的和
+    double[] diagonal = new double[N];  // r矩阵对角线值
 
     @Override
     protected void setup(Context context) throws IOException {
+        // 读取distributedCache中的文件
         FileSystem fileSystem = FileSystem.get(context.getConfiguration());
         URI[] cacheFiles = context.getCacheFiles();
 
@@ -33,9 +34,9 @@ public class AssignAvaMapper extends Mapper<LongWritable, Text, NullWritable, Te
                     String[] value = line.split("@");
                     // 得到列号
                     int col = Integer.parseInt(value[0]);
-
                     // 得到列的和以及矩阵r对角线值
                     element = value[1].split("#");
+                    // 赋值sum和diagonal数组
                     sum[col] = Double.parseDouble(element[0]);
                     diagonal[col] = Double.parseDouble(element[1]);
                 }
@@ -65,11 +66,13 @@ public class AssignAvaMapper extends Mapper<LongWritable, Text, NullWritable, Te
             double s = Double.parseDouble(cur[1]); // s[row][col]
             double a_old = Double.parseDouble(cur[2]);
             double a_new = 0.0;
+            // 依据a矩阵更新公式进行更新
             if(row == col) {
                 a_new = sum[col] - Math.max(0, r);
             }else{
                 a_new = Math.min(0, diagonal[col] + sum[col] - Math.max(0, r) - Math.max(0, diagonal[col]));
             }
+            // 阻尼系数防止数据在某个范围内发生振荡，不收敛
             double a = Main.K * a_old + (1 - Main.K) * a_new;
             result += a+"#"+s+"#"+r;
             if(col < n-1){

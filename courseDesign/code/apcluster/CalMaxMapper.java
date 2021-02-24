@@ -22,6 +22,7 @@ public class CalMaxMapper extends Mapper<LongWritable, Text, IntWritable, Text> 
             String[] cur = elements[col].split("#");
             double a = Double.parseDouble(cur[0]);
             double s = Double.parseDouble(cur[1]);
+            // 得到a矩阵和r矩阵对应位置元素之和
             double sum = a + s;
             String result = sum + "#" + col;
             context.write(new IntWritable(row), new Text(result));

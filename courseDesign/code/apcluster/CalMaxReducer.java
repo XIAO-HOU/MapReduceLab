@@ -14,10 +14,10 @@ public class CalMaxReducer extends Reducer<IntWritable, Text, NullWritable, Text
 
     @Override
     protected void reduce(IntWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        double max = -INF;
-        double secMax = -INF;
-        int pos = -1;
-        int tot = 0;
+        double max = -INF;      // 最大值
+        double secMax = -INF;   // 次大值
+        int pos = -1;           // 最大值位置
+        int tot = 0;            // 列数
         for (Text value : values) {
             // cur[0] = "a+s"，和的值
             // cur[1] = "col"，所处的列
